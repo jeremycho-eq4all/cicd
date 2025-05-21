@@ -6,6 +6,7 @@ trigger:
   event:
     - pull_request
 
+
 steps:
   - name: sonar scan
     image: sonarsource/sonar-scanner-cli
