@@ -5,6 +5,8 @@ name: sonar-pr-main
 trigger:
   event:
     - pull_request
+  target:
+    - main
 
 
 steps:
