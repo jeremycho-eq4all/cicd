@@ -14,4 +14,4 @@ steps:
       SONAR_TOKEN:
         from_secret: sonar_token
     commands:
-      - sonar-scanner -Dsonar.projectKey=cicd -Dsonar.sources=. -Dsonar.host.url=http://192.168.1.250:7895 -Dsonar.login=$SONAR_TOKEN
+      - sonar-scanner -Dsonar.projectKey=cicd -Dsonar.sources=. -Dsonar.host.url=http://192.168.1.250:7895 -Dsonar.login=$SONAR_TOKEN -Dsonar.working.directory=/tmp/.scannerwork
