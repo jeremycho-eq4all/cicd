@@ -5,8 +5,6 @@ name: sonar-pr-main
 trigger:
   event:
     - pull_request
-  target:
-    - main  # PR 대상 브랜치가 main일 때만 실행됨
 
 steps:
   - name: sonar scan
