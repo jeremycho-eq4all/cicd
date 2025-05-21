@@ -1,0 +1,9 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  - name: test
+    image: python:3.10
+    commands:
+      - echo "Drone is working!"
