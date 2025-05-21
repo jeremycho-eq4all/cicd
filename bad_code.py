@@ -20,15 +20,15 @@ def unused_feature():
 # ✅ 방법 2: 중복 코드 유도 (복붙)
 def duplicate_block():
     print("block A")
-    print("block A")
-    print("block A")
-    print("block A")
+    print("block B")
+    print("block C")
+    print("block D")
 
 def duplicate_block_2():
-    print("block A")
-    print("block A")
-    print("block A")
-    print("block A")
+    print("block E")
+    print("block F")
+    print("block G")
+    print("block H")
 
 # ✅ 방법 3: 보안 Hotspot 유발
 import os
