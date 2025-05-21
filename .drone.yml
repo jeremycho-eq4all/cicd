@@ -8,10 +8,25 @@ trigger:
 
 
 steps:
+  - name: test & coverage
+    image: python:3.11
+    commands:
+      - pip install -r requirements.txt
+      - pytest --cov=. --cov-report=xml
+
   - name: sonar scan
     image: sonarsource/sonar-scanner-cli
     environment:
       SONAR_TOKEN:
         from_secret: sonar_token
     commands:
-      - sonar-scanner -Dsonar.projectKey=cicd -Dsonar.sources=. -Dsonar.host.url=http://192.168.1.250:7895 -Dsonar.login=$SONAR_TOKEN -Dsonar.working.directory=/tmp/.scannerwork
+      - sonar-scanner -Dsonar.projectKey=cicd -Dsonar.sources=. -Dsonar.host.url=http://192.168.1.250:7895 -Dsonar.login=$SONAR_TOKEN -Dsonar.python.coverage.reportPaths=coverage.xml -Dsonar.working.directory=/tmp/.scannerwork
+
+  - name: quality gate check
+    image: curlimages/curl
+    environment:
+      SONAR_TOKEN:
+        from_secret: sonar_token
+    commands:
+      - >
+        curl -s -u $SONAR_TOKEN: "http://192.168.1.250:7895/api/qualitygates/project_status?projectKey=cicd" | tee result.json | grep -q '"status":"ERROR"' && exit 1 || exit 0
