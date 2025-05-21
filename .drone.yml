@@ -1,14 +1,25 @@
 kind: pipeline
 type: docker
-name: default
+name: sonar-pr-main
 
 trigger:
   event:
-    - push
     - pull_request
+  target:
+    - main  # PR 대상 브랜치가 main일 때만 실행됨
 
 steps:
-  - name: test
-    image: python:3.10
+  - name: sonar scan
+    image: sonarsource/sonar-scanner-cli
+    environment:
+      SONAR_TOKEN:
+        from_secret: sonar_token
     commands:
-      - echo "Drone is working!"
+      - sonar-scanner \
+          -Dsonar.projectKey=cicd \
+          -Dsonar.sources=. \
+          -Dsonar.host.url=http://192.168.1.250:7895 \
+          -Dsonar.login=$SONAR_TOKEN \
+          -Dsonar.pullrequest.branch=$DRONE_SOURCE_BRANCH \
+          -Dsonar.pullrequest.key=$DRONE_PULL_REQUEST \
+          -Dsonar.pullrequest.base=$DRONE_TARGET_BRANCH
