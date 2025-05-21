@@ -8,6 +8,16 @@ trigger:
 
 
 steps:
+  - name: skip-non-main-pr
+    image: alpine
+    commands:
+      - |
+        echo "Target branch: $DRONE_TARGET_BRANCH"
+        if [ "$DRONE_TARGET_BRANCH" != "main" ]; then
+          echo "⏭️ Not a PR to main. Skipping pipeline..."
+          exit 78
+        fi
+
   - name: test & coverage
     image: python:3.11
     commands:

@@ -14,3 +14,4 @@ if __name__ == "__main__":
     print(greet("SonarQube"))
     print(greet("drone stting"))
     print(greet("branch dev test"))
+    print(greet("skip test"))
