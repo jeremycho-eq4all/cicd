@@ -5,6 +5,10 @@ name: default
 steps:
   - name: auto-tag
     image: alpine/git
+    when:
+      event:
+        - push
+        - pull_request
     environment:
       GIT_AUTHOR_NAME: drone-ci
       GIT_AUTHOR_EMAIL: drone@example.com
