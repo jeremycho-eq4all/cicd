@@ -38,7 +38,7 @@ steps:
 
         echo "BUILD: $BUILD"
 
-        NEW_TAG="v${MAJOR}.${MINOR}.${BUILD}"
+        NEW_TAG="v1.0.0"
         echo "🔖 태그 생성: $NEW_TAG"
 
         git tag "$NEW_TAG"
