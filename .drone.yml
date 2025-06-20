@@ -28,8 +28,11 @@ steps:
         git fetch --tags origin
         LAST_TAG=$(git tag | grep -E "^v${MAJOR}\.${MINOR}\.[0-9]+$" | sort -V | tail -n1)
 
+        echo "LAST_TAG: $LAST_TAG"
+
         BUILD=0
         if [ -n "$LAST_TAG" ]; then
+          echo "라스트 태그관련 if 문 들어옴"
           BUILD=$(echo "$LAST_TAG" | awk -F. '{print $3}')
           BUILD=$((BUILD + 1))
         fi
