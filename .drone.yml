@@ -11,28 +11,27 @@ steps:
       GIT_TOKEN:
         from_secret: GIT_TOKEN
     commands:
-      - git config --global user.name "$GIT_AUTHOR_NAME"
-      - git config --global user.email "$GIT_AUTHOR_EMAIL"
-      - git remote set-url origin https://$GIT_TOKEN@github.com/jeremycho-eq4all/cicd.git
+      - |
+        git config --global user.name "$GIT_AUTHOR_NAME"
+        git config --global user.email "$GIT_AUTHOR_EMAIL"
+        git remote set-url origin https://$GIT_TOKEN@github.com/jeremycho-eq4all/cicd.git
 
-      # 버전 정보 추출
-      - VERSION=$(cat .version)
-      - MAJOR=$(echo $VERSION | cut -d. -f1)
-      - MINOR=$(echo $VERSION | cut -d. -f2)
+        VERSION=$(cat .version)
+        MAJOR=$(echo $VERSION | cut -d. -f1)
+        MINOR=$(echo $VERSION | cut -d. -f2)
 
-      # 기존 태그 중 최신 빌드 번호 찾기
-      - git fetch --tags
-      - LAST_TAG=$(git tag | grep -E "^v${MAJOR}\.${MINOR}\.[0-9]+$" | sort -V | tail -n1)
+        git fetch --tags
+        LAST_TAG=$(git tag | grep -E "^v${MAJOR}\.${MINOR}\.[0-9]+$" | sort -V | tail -n1)
 
-      - if [ -z "$LAST_TAG" ]; then
-          BUILD=0;
+        if [ -z "$LAST_TAG" ]; then
+          BUILD=0
         else
-          BUILD=$(echo $LAST_TAG | awk -F. '{print $3}');
-          BUILD=$((BUILD + 1));
+          BUILD=$(echo $LAST_TAG | awk -F. '{print $3}')
+          BUILD=$((BUILD + 1))
         fi
 
-      - NEW_TAG="v${MAJOR}.${MINOR}.${BUILD}"
-      - echo "🔖 태그 생성: $NEW_TAG"
+        NEW_TAG="v${MAJOR}.${MINOR}.${BUILD}"
+        echo "🔖 태그 생성: $NEW_TAG"
 
-      - git tag "$NEW_TAG"
-      - git push origin "$NEW_TAG"
+        git tag "$NEW_TAG"
+        git push origin "$NEW_TAG"
