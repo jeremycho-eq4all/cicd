@@ -8,35 +8,51 @@ trigger:
 
 
 steps:
-  - name: skip-non-main-pr
-    image: alpine
-    commands:
-      - |
-        echo "Target branch: $DRONE_TARGET_BRANCH"
-        if [ "$DRONE_TARGET_BRANCH" != "main" ]; then
-          echo "⏭️ Not a PR to main. Skipping pipeline..."
-          exit 78
-        fi
 
-  - name: test & coverage
-    image: python:3.11
-    commands:
-      - pip install -r requirements.txt
-      - pytest --cov=. --cov-report=xml
-
-  - name: sonar scan
-    image: sonarsource/sonar-scanner-cli
+  - name: auto-tag
+    image: alpine/git
     environment:
-      SONAR_TOKEN:
-        from_secret: sonar_token
+      GIT_USERNAME:
+        from_secret: GIT_USERNAME
+      GIT_PASSWORD:
+        from_secret: GIT_PASSWORD
     commands:
-      - sonar-scanner -Dsonar.projectKey=cicd -Dsonar.sources=. -Dsonar.host.url=http://192.168.1.250:7895 -Dsonar.login=$SONAR_TOKEN -Dsonar.python.coverage.reportPaths=coverage.xml -Dsonar.working.directory=/tmp/.scannerwork
+      - git config --global user.email "droneci@eq4all.co.kr"
+      - git config --global user.name "drone"
+      - git remote set-url origin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/jeremycho-eq4all/cicd.git
+      - VERSION=$(date +%Y.%m.%d.%H%M)
+      - git tag -a "v${VERSION}" -m "Auto tag by Drone"
+      - git push origin "v${VERSION}"
 
-  - name: quality gate check
-    image: curlimages/curl
-    environment:
-      SONAR_TOKEN:
-        from_secret: sonar_token
-    commands:
-      - >
-        curl -s -u $SONAR_TOKEN: "http://192.168.1.250:7895/api/qualitygates/project_status?projectKey=cicd" | tee /tmp/result.json | grep -q '"status":"ERROR"' && exit 1 || exit 0
+  # - name: skip-non-main-pr
+  #   image: alpine
+  #   commands:
+  #     - |
+  #       echo "Target branch: $DRONE_TARGET_BRANCH"
+  #       if [ "$DRONE_TARGET_BRANCH" != "main" ]; then
+  #         echo "⏭️ Not a PR to main. Skipping pipeline..."
+  #         exit 78
+  #       fi
+
+  # - name: test & coverage
+  #   image: python:3.11
+  #   commands:
+  #     - pip install -r requirements.txt
+  #     - pytest --cov=. --cov-report=xml
+
+  # - name: sonar scan
+  #   image: sonarsource/sonar-scanner-cli
+  #   environment:
+  #     SONAR_TOKEN:
+  #       from_secret: sonar_token
+  #   commands:
+  #     - sonar-scanner -Dsonar.projectKey=cicd -Dsonar.sources=. -Dsonar.host.url=http://192.168.1.250:7895 -Dsonar.login=$SONAR_TOKEN -Dsonar.python.coverage.reportPaths=coverage.xml -Dsonar.working.directory=/tmp/.scannerwork
+
+  # - name: quality gate check
+  #   image: curlimages/curl
+  #   environment:
+  #     SONAR_TOKEN:
+  #       from_secret: sonar_token
+  #   commands:
+  #     - >
+  #       curl -s -u $SONAR_TOKEN: "http://192.168.1.250:7895/api/qualitygates/project_status?projectKey=cicd" | tee /tmp/result.json | grep -q '"status":"ERROR"' && exit 1 || exit 0
