@@ -6,16 +6,13 @@ steps:
   - name: auto-tag
     image: alpine:latest
     environment:
-      GIT_USERNAME:
-        from_secret: GIT_USERNAME
-      GIT_PASSWORD:
-        from_secret: GIT_PASSWORD
+      GIT_USERNAME: ""
+      GIT_PASSWORD: ""
     commands:
-      - echo "REAL CHECK"
-      - echo "USERNAME from env: $GIT_USERNAME"
-      - echo "PASSWORD length: ${#GIT_PASSWORD}"
+      - echo "✅ GIT_USERNAME: $GIT_USERNAME"
+      - echo "✅ GIT_PASSWORD: ${#GIT_PASSWORD} characters long"
       - export REMOTE_URL="https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/jeremycho-eq4all/cicd.git"
-      - echo "REMOTE_URL is: $REMOTE_URL"
+      - echo "REMOTE_URL: $REMOTE_URL"
       - apk add --no-cache git
       - git config --global user.email "droneci@eq4all.co.kr"
       - git config --global user.name "drone"
@@ -23,6 +20,12 @@ steps:
       - VERSION=$(date +%Y.%m.%d.%H%M)
       - git tag -a "v${VERSION}" -m "Auto tag by Drone"
       - git push origin "v${VERSION}"
+
+# ✅ Secrets는 pipeline level에서 선언해야 함
+# (from_secret X, name만 선언!)
+secrets:
+  - GIT_USERNAME
+  - GIT_PASSWORD
 
   # - name: skip-non-main-pr
   #   image: alpine
