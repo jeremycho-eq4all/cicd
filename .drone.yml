@@ -26,10 +26,7 @@ steps:
 
         git fetch --tags
 
-        REGEX="^v${MAJOR}\.${MINOR}\.[0-9]+$"
-        echo "REGEX: $REGEX"
-
-        LAST_TAG=$(git tag | grep -E "$REGEX" | sort -V | tail -n1)
+        LAST_TAG=$(git tag | grep -E "^v${MAJOR}\.${MINOR}\.[0-9]+$" | sort -V | tail -n1)
         echo "LAST_TAG: $LAST_TAG"
 
         BUILD=0
