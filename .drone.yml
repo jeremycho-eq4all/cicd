@@ -2,9 +2,9 @@ kind: pipeline
 type: docker
 name: sonar-pr-main
 
-trigger:
-  event:
-    - pull_request
+# trigger:
+#   event:
+#     - pull_request
 
 
 steps:
@@ -19,6 +19,10 @@ steps:
     commands:
       - git config --global user.email "jeremycho@eq4all.co.kr"
       - git config --global user.name "jeremycho-eq4all"
+
+      # ✅ Secret 값 확인용 로그 출력 (토큰은 앞 4자리만 노출)
+      - echo "✅ GIT_USERNAME=${GIT_USERNAME}"
+      - echo "✅ GIT_PASSWORD=${GIT_PASSWORD:0:4}****"
       - git remote set-url origin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/jeremycho-eq4all/cicd.git
       - VERSION=$(date +%Y.%m.%d.%H%M)
       - git tag -a "v${VERSION}" -m "Auto tag by Drone"
