@@ -11,9 +11,6 @@ secrets:
 steps:
   - name: auto-tag
     image: alpine:latest
-    environment:
-      GIT_USERNAME: ""
-      GIT_PASSWORD: ""
     commands:
       - echo "✅ GIT_USERNAME: $GIT_USERNAME"
       - echo "✅ GIT_PASSWORD: ${#GIT_PASSWORD} characters long"
