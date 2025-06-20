@@ -1,58 +1,65 @@
 kind: pipeline
 type: docker
-name: sonar-pr-main
-
-trigger:
-  event:
-    - pull_request
-
+name: default
 
 steps:
-
   - name: auto-tag
     image: alpine/git
     environment:
-      GIT_USERNAME:
-        from_secret: GIT_USERNAME
-      GIT_PASSWORD:
-        from_secret: GIT_PASSWORD
+      GIT_AUTHOR_NAME: drone-ci
+      GIT_AUTHOR_EMAIL: drone@example.com
+      GIT_TOKEN:
+        from_secret: GIT_TOKEN
     commands:
-      - git config --global user.email "droneci@eq4all.co.kr"
-      - git config --global user.name "drone"
-      - git remote set-url origin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/jeremycho-eq4all/cicd.git
-      - VERSION=$(date +%Y.%m.%d.%H%M)
-      - git tag -a "v${VERSION}" -m "Auto tag by Drone"
-      - git push origin "v${VERSION}"
+      - |
+        git config --global user.name "$GIT_AUTHOR_NAME"
+        git config --global user.email "$GIT_AUTHOR_EMAIL"
+        git remote set-url origin https://$GIT_TOKEN@github.com/jeremycho-eq4all/cicd.git
 
-  # - name: skip-non-main-pr
-  #   image: alpine
-  #   commands:
-  #     - |
-  #       echo "Target branch: $DRONE_TARGET_BRANCH"
-  #       if [ "$DRONE_TARGET_BRANCH" != "main" ]; then
-  #         echo "⏭️ Not a PR to main. Skipping pipeline..."
-  #         exit 78
-  #       fi
+        VERSION=$(cat .version)
+        MAJOR=$(echo $VERSION | cut -d. -f1)
+        MINOR=$(echo $VERSION | cut -d. -f2)
 
-  # - name: test & coverage
-  #   image: python:3.11
-  #   commands:
-  #     - pip install -r requirements.txt
-  #     - pytest --cov=. --cov-report=xml
+        git fetch --tags origin
 
-  # - name: sonar scan
-  #   image: sonarsource/sonar-scanner-cli
-  #   environment:
-  #     SONAR_TOKEN:
-  #       from_secret: sonar_token
-  #   commands:
-  #     - sonar-scanner -Dsonar.projectKey=cicd -Dsonar.sources=. -Dsonar.host.url=http://192.168.1.250:7895 -Dsonar.login=$SONAR_TOKEN -Dsonar.python.coverage.reportPaths=coverage.xml -Dsonar.working.directory=/tmp/.scannerwork
+        echo "VERSION: $VERSION"
+        echo "MAJOR: [$MAJOR]"
+        echo "MINOR: [$MINOR]"
 
-  # - name: quality gate check
-  #   image: curlimages/curl
-  #   environment:
-  #     SONAR_TOKEN:
-  #       from_secret: sonar_token
-  #   commands:
-  #     - >
-  #       curl -s -u $SONAR_TOKEN: "http://192.168.1.250:7895/api/qualitygates/project_status?projectKey=cicd" | tee /tmp/result.json | grep -q '"status":"ERROR"' && exit 1 || exit 0
+        echo ">> 조합 전: MAJOR=$MAJOR / MINOR=$MINOR"
+        REGEX=$(printf "^v%s\\.%s\\.[0-9]+$" "$MAJOR" "$MINOR")
+        echo ">> 조합 후 REGEX='$REGEX'"
+        
+
+        echo "📌 정규식 실제 표현: $REGEX"
+        git tag | grep -E "$REGEX" || echo "❗️정규식에 매칭되는 태그 없음"
+
+
+        echo "📦 현재 Git 태그 목록:"
+        git tag
+        # ✅ 태그 정규식 적용
+        LAST_TAG=$(git tag | grep -E "$REGEX" | sort -V | tail -n1)
+        echo "LAST_TAG: $LAST_TAG"
+
+        BUILD=0
+        if [ -n "$LAST_TAG" ]; then
+          echo "라스트 태그관련 if 문 들어옴"
+          BUILD=$(echo "$LAST_TAG" | awk -F. '{print $3}')
+          BUILD=$((BUILD + 1))
+        fi
+
+        echo "BUILD!!!!!!!!!!: $BUILD"
+
+        NEW_TAG=$(printf "v%s.%s.%s" "$MAJOR" "$MINOR" "$BUILD")
+
+        echo "NEW_TAG!!!!!!!!!!!!!!!!!: $NEW_TAG" 
+
+        # 존재 여부 체크
+        if git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
+          echo "⚠️ 태그 $NEW_TAG 이미 존재합니다. 스킵합니다."
+          exit 0
+        fi
+
+        echo "🔖 태그 생성: $NEW_TAG"
+        git tag "$NEW_TAG"
+        git push origin "$NEW_TAG"
