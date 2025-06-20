@@ -21,6 +21,12 @@ steps:
         git config --global user.email "$GIT_AUTHOR_EMAIL"
         git remote set-url origin https://$GIT_TOKEN@github.com/jeremycho-eq4all/cicd.git
 
+        # 커밋 메시지에 [release] 포함 여부
+        if ! git log -1 --pretty=%B | grep -q '\[release\]'; then
+          echo "🔕 [release] 태그 없음 — 태그 생략"
+          exit 0
+        fi
+
         VERSION=$(cat .version)
         MAJOR=$(echo "$VERSION" | cut -d. -f1)
         MINOR=$(echo "$VERSION" | cut -d. -f2)
