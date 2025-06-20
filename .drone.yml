@@ -20,6 +20,7 @@ steps:
         MAJOR=$(echo $VERSION | cut -d. -f1)
         MINOR=$(echo $VERSION | cut -d. -f2)
 
+
         echo "VERSION: $VERSION"
         echo "MAJOR: $MAJOR"
         echo "MINOR: $MINOR"
