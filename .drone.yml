@@ -38,6 +38,9 @@ steps:
 
         echo "BUILD: $BUILD"
 
+        echo "VERSION: $VERSION"
+        echo "MAJOR: $MAJOR"
+        echo "MINOR: $MINOR"
         NEW_TAG="v1.0.0"
         echo "🔖 태그 생성: $NEW_TAG"
 
