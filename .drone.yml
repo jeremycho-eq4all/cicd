@@ -17,49 +17,27 @@ steps:
         git remote set-url origin https://$GIT_TOKEN@github.com/jeremycho-eq4all/cicd.git
 
         VERSION=$(cat .version)
-        MAJOR=$(echo $VERSION | cut -d. -f1)
-        MINOR=$(echo $VERSION | cut -d. -f2)
+        MAJOR=$(echo "$VERSION" | cut -d. -f1)
+        MINOR=$(echo "$VERSION" | cut -d. -f2)
 
         git fetch --tags origin
 
-        echo "VERSION: $VERSION"
-        echo "MAJOR: [$MAJOR]"
-        echo "MINOR: [$MINOR]"
-
-        echo ">> 조합 전: MAJOR=$MAJOR / MINOR=$MINOR"
         REGEX=$(printf "^v%s\\.%s\\.[0-9]+$" "$MAJOR" "$MINOR")
-        echo ">> 조합 후 REGEX='$REGEX'"
-        
-
-        echo "📌 정규식 실제 표현: $REGEX"
-        git tag | grep -E "$REGEX" || echo "❗️정규식에 매칭되는 태그 없음"
-
-
-        echo "📦 현재 Git 태그 목록:"
-        git tag
-        # ✅ 태그 정규식 적용
         LAST_TAG=$(git tag | grep -E "$REGEX" | sort -V | tail -n1)
-        echo "LAST_TAG: $LAST_TAG"
 
         BUILD=0
         if [ -n "$LAST_TAG" ]; then
-          echo "라스트 태그관련 if 문 들어옴"
           BUILD=$(echo "$LAST_TAG" | awk -F. '{print $3}')
           BUILD=$((BUILD + 1))
         fi
 
-        echo "BUILD!!!!!!!!!!: $BUILD"
-
         NEW_TAG=$(printf "v%s.%s.%s" "$MAJOR" "$MINOR" "$BUILD")
+        echo "🔖 생성할 태그: $NEW_TAG"
 
-        echo "NEW_TAG!!!!!!!!!!!!!!!!!: $NEW_TAG" 
-
-        # 존재 여부 체크
         if git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
-          echo "⚠️ 태그 $NEW_TAG 이미 존재합니다. 스킵합니다."
+          echo "⚠️ 태그 $NEW_TAG 이미 존재. 스킵합니다."
           exit 0
         fi
 
-        echo "🔖 태그 생성: $NEW_TAG"
         git tag "$NEW_TAG"
         git push origin "$NEW_TAG"
