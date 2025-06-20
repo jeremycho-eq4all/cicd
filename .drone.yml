@@ -50,7 +50,9 @@ steps:
 
         echo "BUILD!!!!!!!!!!: $BUILD"
 
-        NEW_TAG="v${MAJOR}.${MINOR}.${BUILD}"
+        NEW_TAG=$(printf "v%s\\.%s\\.%s" "$MAJOR" "$MINOR" "$BUILD")
+
+        echo "NEW_TAG!!!!!!!!!!!!!!!!!: $NEW_TAG" 
 
         # 존재 여부 체크
         if git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
