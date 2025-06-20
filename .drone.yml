@@ -19,7 +19,9 @@ steps:
         VERSION=$(cat .version)
         MAJOR=$(echo $VERSION | cut -d. -f1)
         MINOR=$(echo $VERSION | cut -d. -f2)
-
+        echo "VERSION: $VERSION"
+        echo "MAJOR: $MAJOR"
+        echo "MINOR: $MINOR"
         git fetch --tags
         LAST_TAG=$(git tag | grep -E "^v${MAJOR}\.${MINOR}\.[0-9]+$" | sort -V | tail -n1)
 
