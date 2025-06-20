@@ -26,8 +26,18 @@ steps:
         echo "MINOR: $MINOR"
 
         git fetch --tags origin
-        LAST_TAG=$(git tag | grep -E "^v${MAJOR}\.${MINOR}\.[0-9]+$" | sort -V | tail -n1)
+        # ✅ 변수 값 확인
+        echo "정규식 조합 전 변수 확인:"
+        echo "MAJOR = $MAJOR"
+        echo "MINOR = $MINOR"
 
+        # ✅ 정규식 만들기 + 출력
+        REGEX="^v${MAJOR}\.${MINOR}\.[0-9]+$"
+        echo "적용된 REGEX: $REGEX"
+        echo "📦 현재 Git 태그 목록:"
+        git tag
+        # ✅ 태그 정규식 적용
+        LAST_TAG=$(git tag | grep -E "$REGEX" | sort -V | tail -n1)
         echo "LAST_TAG: $LAST_TAG"
 
         BUILD=0
