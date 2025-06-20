@@ -1,6 +1,6 @@
 kind: pipeline
 type: docker
-name: sonar-pr-main
+name: auto-tag-test
 
 steps:
   - name: auto-tag
@@ -11,7 +11,7 @@ steps:
     commands:
       - echo "REAL CHECK"
       - echo "USERNAME from env: $GIT_USERNAME"
-      - echo "PASSWORD from env: ${#GIT_PASSWORD} characters long"
+      - echo "PASSWORD length: ${#GIT_PASSWORD}"
       - export REMOTE_URL="https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/jeremycho-eq4all/cicd.git"
       - echo "REMOTE_URL is: $REMOTE_URL"
       - apk add --no-cache git
@@ -22,7 +22,7 @@ steps:
       - git tag -a "v${VERSION}" -m "Auto tag by Drone"
       - git push origin "v${VERSION}"
 
-# ✅ Secret은 steps 바깥에서 선언해야 함
+# ✅ Secret 선언은 반드시 step 바깥, 최상단에서 따로!
 secrets:
   - name: GIT_USERNAME
   - name: GIT_PASSWORD
