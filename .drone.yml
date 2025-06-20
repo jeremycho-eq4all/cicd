@@ -50,7 +50,7 @@ steps:
 
         echo "BUILD!!!!!!!!!!: $BUILD"
 
-        NEW_TAG=$(printf "v%s\.%s\.%s" "$MAJOR" "$MINOR" "$BUILD")
+        NEW_TAG=$(printf "v%s.%s.%s" "$MAJOR" "$MINOR" "$BUILD")
 
         echo "NEW_TAG!!!!!!!!!!!!!!!!!: $NEW_TAG" 
 
