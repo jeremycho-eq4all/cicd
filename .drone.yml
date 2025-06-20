@@ -25,24 +25,23 @@ steps:
         echo "MAJOR: $MAJOR"
         echo "MINOR: $MINOR"
 
-        git fetch --tags
-
+        git fetch --tags origin
         LAST_TAG=$(git tag | grep -E "^v${MAJOR}\.${MINOR}\.[0-9]+$" | sort -V | tail -n1)
-        echo "LAST_TAG: $LAST_TAG"
 
         BUILD=0
         if [ -n "$LAST_TAG" ]; then
-          BUILD=$(echo $LAST_TAG | awk -F. '{print $3}')
+          BUILD=$(echo "$LAST_TAG" | awk -F. '{print $3}')
           BUILD=$((BUILD + 1))
         fi
 
-        echo "BUILD: $BUILD"
+        NEW_TAG="v${MAJOR}.${MINOR}.${BUILD}"
 
-        echo "VERSION: $VERSION"
-        echo "MAJOR: $MAJOR"
-        echo "MINOR: $MINOR"
-        NEW_TAG="v1.0.0"
+        # 존재 여부 체크
+        if git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
+          echo "⚠️ 태그 $NEW_TAG 이미 존재합니다. 스킵합니다."
+          exit 0
+        fi
+
         echo "🔖 태그 생성: $NEW_TAG"
-
         git tag "$NEW_TAG"
         git push origin "$NEW_TAG"
