@@ -26,9 +26,10 @@ steps:
         echo "MAJOR: [$MAJOR]"
         echo "MINOR: [$MINOR]"
 
-        # ✅ 정규식 만들기 + 출력
-        REGEX="^v${[$MINOR]}\.${[$MINOR]}\.[0-9]+$"
-        echo "적용된 REGEX: $REGEX"
+        echo ">> 조합 전: MAJOR=$MAJOR / MINOR=$MINOR"
+        REGEX="^v${MAJOR}\.${MINOR}\.[0-9]+$"
+        echo ">> 조합 후 REGEX='$REGEX'"
+        
 
         echo "📌 정규식 실제 표현: $REGEX"
         git tag | grep -E "$REGEX" || echo "❗️정규식에 매칭되는 태그 없음"
