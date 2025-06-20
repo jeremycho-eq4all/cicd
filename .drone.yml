@@ -2,6 +2,12 @@ kind: pipeline
 type: docker
 name: auto-tag-test
 
+# ✅ Secrets는 pipeline level에서 선언해야 함
+# (from_secret X, name만 선언!)
+secrets:
+  - GIT_USERNAME
+  - GIT_PASSWORD
+
 steps:
   - name: auto-tag
     image: alpine:latest
@@ -21,11 +27,7 @@ steps:
       - git tag -a "v${VERSION}" -m "Auto tag by Drone"
       - git push origin "v${VERSION}"
 
-# ✅ Secrets는 pipeline level에서 선언해야 함
-# (from_secret X, name만 선언!)
-secrets:
-  - GIT_USERNAME
-  - GIT_PASSWORD
+
 
   # - name: skip-non-main-pr
   #   image: alpine
