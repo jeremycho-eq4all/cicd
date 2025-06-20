@@ -27,7 +27,7 @@ steps:
         echo "MINOR: [$MINOR]"
 
         echo ">> 조합 전: MAJOR=$MAJOR / MINOR=$MINOR"
-        REGEX="^v${MAJOR}\.${MINOR}\.[0-9]+$"
+        REGEX=$(printf "^v%s\\.%s\\.[0-9]+$" "$MAJOR" "$MINOR")
         echo ">> 조합 후 REGEX='$REGEX'"
         
 
