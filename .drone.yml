@@ -34,6 +34,11 @@ steps:
         # ✅ 정규식 만들기 + 출력
         REGEX="^v${MAJOR}\.${MINOR}\.[0-9]+$"
         echo "적용된 REGEX: $REGEX"
+
+        echo "📌 정규식 실제 표현: $REGEX"
+        git tag | grep -E "$REGEX" || echo "❗️정규식에 매칭되는 태그 없음"
+
+
         echo "📦 현재 Git 태그 목록:"
         git tag
         # ✅ 태그 정규식 적용
