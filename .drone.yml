@@ -18,6 +18,11 @@ steps:
         from_secret: GIT_PASSWORD
     
     commands:
+      - echo "REAL CHECK"
+      - echo "USERNAME from env: $GIT_USERNAME"
+      - echo "PASSWORD from env: ${#GIT_PASSWORD} characters long"
+      - export REMOTE_URL="https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/jeremycho-eq4all/cicd.git"
+      - echo "REMOTE_URL is: $REMOTE_URL"
       - apk add --no-cache git
       - export REMOTE_URL="https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/jeremycho-eq4all/cicd.git"
       - git config --global user.email "droneci@eq4all.co.kr"
