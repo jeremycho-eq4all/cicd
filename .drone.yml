@@ -35,7 +35,7 @@ steps:
           BUILD=$((BUILD + 1))
         fi
 
-        NEW_TAG=$(printf "v%s.%s.%s" "$MAJOR" "$MINOR" "$BUILD")
+        NEW_TAG=$(printf "v%s.%s.300" "$MAJOR" "$MINOR")
         echo "🔖 생성할 태그: $NEW_TAG"
 
         if git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
