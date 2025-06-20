@@ -6,13 +6,10 @@ steps:
   - name: auto-tag
     image: alpine:latest
     environment:
-      GIT_USERNAME: ""
-      GIT_PASSWORD: ""
-    secrets:
-      - source: GIT_USERNAME
-        target: GIT_USERNAME
-      - source: GIT_PASSWORD
-        target: GIT_PASSWORD
+      GIT_USERNAME:
+        from_secret: GIT_USERNAME
+      GIT_PASSWORD:
+        from_secret: GIT_PASSWORD
     commands:
       - echo "REAL CHECK"
       - echo "USERNAME from env: $GIT_USERNAME"
