@@ -2,21 +2,17 @@ kind: pipeline
 type: docker
 name: sonar-pr-main
 
-# trigger:
-#   event:
-#     - pull_request
-
-
 steps:
-
   - name: auto-tag
     image: alpine:latest
     environment:
-      GIT_USERNAME:
-        from_secret: GIT_USERNAME
-      GIT_PASSWORD:
-        from_secret: GIT_PASSWORD
-    
+      GIT_USERNAME: ""
+      GIT_PASSWORD: ""
+    secrets:
+      - source: GIT_USERNAME
+        target: GIT_USERNAME
+      - source: GIT_PASSWORD
+        target: GIT_PASSWORD
     commands:
       - echo "REAL CHECK"
       - echo "USERNAME from env: $GIT_USERNAME"
@@ -24,7 +20,6 @@ steps:
       - export REMOTE_URL="https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/jeremycho-eq4all/cicd.git"
       - echo "REMOTE_URL is: $REMOTE_URL"
       - apk add --no-cache git
-      - export REMOTE_URL="https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/jeremycho-eq4all/cicd.git"
       - git config --global user.email "droneci@eq4all.co.kr"
       - git config --global user.name "drone"
       - git remote set-url origin "$REMOTE_URL"
