@@ -19,7 +19,7 @@ steps:
     commands:
       - git config --global user.email "jeremycho@eq4all.co.kr"
       - git config --global user.name "jeremycho-eq4all"
-
+      - env | grep GIT
       # ✅ Secret 값 확인용 로그 출력 (토큰은 앞 4자리만 노출)
       - echo "✅ GIT_USERNAME=${GIT_USERNAME}"
       - echo "✅ GIT_PASSWORD=${GIT_PASSWORD:0:4}****"
